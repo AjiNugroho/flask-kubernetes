@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-aji-service
+spec:
+  selector:
+    app: flask-aji-app
+  ports:
+  - protocol: "TCP"
+    port: 6000
+    targetPort: 5000
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-aji-app
+spec:
+  selector:
+    matchLabels:
+      app: flask-aji-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: flask-aji-app
+    spec:
+      containers:
+      - name: flask-aji-app
+        image: flask-aji
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: "250m"
+          limits:
+            cpu: "500m"
+        ports:
+        - containerPort: 5000
